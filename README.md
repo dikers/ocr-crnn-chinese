@@ -22,10 +22,10 @@ sh ./shell/get_sample_data.sh
 # 少量测试数据
 sh ./shell/generation_cn_hw_tfrecord.sh   ./sample_data/test.txt  0.2  
 
-# 中等测试数据
+# 中等测试数据  需要先执行（sh ./shell/get_sample_data.sh）
 sh ./shell/generation_cn_hw_tfrecord.sh   ./output/raw_data/cnews.val.txt  0.2  
 
-# 大量测试数据
+# 大量测试数据  需要先执行（sh ./shell/get_sample_data.sh）
 sh ./shell/generation_cn_hw_tfrecord.sh   ./output/raw_data/cnews.train.txt  0.1  
 ```
 
