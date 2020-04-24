@@ -14,6 +14,18 @@ startTime_s=`date +%s`
 OUTPUT_DIR='./output/'
 RAW_DATA_DIR=${OUTPUT_DIR}'raw_data/'
 
+
+if [ ! -d ${OUTPUT_DIR} ]
+then
+    mkdir ${OUTPUT_DIR}
+fi
+
+if [ ! -d ${RAW_DATA_DIR} ]
+then
+    mkdir ${RAW_DATA_DIR}
+fi
+
+
 ZIP_DATA_PATH=${RAW_DATA_DIR}'cnews_data.zip'
 
 TEXT_DATA_DIR=${OUTPUT_DIR}'text_data/'
