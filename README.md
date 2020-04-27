@@ -1,23 +1,31 @@
 #   OCR 识别
 
 
-### set up environment
+通过调用trdg，自动生成中文手写体图片， 然后通过crnn+ctc进行文本识别。
+
+
+## 建立环境
 
 ```shell script
-conda create -n  id-ocr python=3.6 pip scipy numpy ##运用conda 创建python环境
-source activate id-ocr
+conda create -n  ocr-cn python=3.6 pip scipy numpy ##运用conda 创建python环境
+source activate ocr-cn
 pip install -r requirements.txt -i https://mirrors.163.com/pypi/simple/
 ```
 
 
-### 下载数据
+## 准备数据
 
 ```shell script
 sh ./shell/get_sample_data.sh
 ```
 
 
-###  生成tfrecord 记录  
+##  生成tfrecord记录  
+
+* 文本生成图片  [TRDG 文本生成图片代码](https://github.com/Belval/TextRecognitionDataGenerator)
+* 可以添加多种手写字体文件  [免费中文字体文件下载地址](http://www.sucaijishi.com/material/font/)
+
+
 ```shell script
 # 少量测试数据
 sh ./shell/generation_cn_hw_tfrecord.sh   ./sample_data/test.txt  0.2  
@@ -30,7 +38,7 @@ sh ./shell/generation_cn_hw_tfrecord.sh   ./output/raw_data/cnews.train.txt  0.1
 ```
 
 
-### 生成数据
+## 生成数据
 
 生成数据在./output 下面
 
@@ -62,22 +70,33 @@ sh ./shell/generation_cn_hw_tfrecord.sh   ./output/raw_data/cnews.train.txt  0.1
 ```shell script
 ./output/text_data/char_map.json   
 ./output/tfrecords/train  # 测试集
-./output/tfrecords/valid  #  验证集
+./output/tfrecords/valid  # 验证集
 ```
 
 
 
 
 
-###  训练模型
+##  训练模型
 
 ```shell script
 sh shell/train_crnn.py
 ```
+[CRNN 参考代码 - CRNN_Tensorflow](https://github.com/MaybeShewill-CV/CRNN_Tensorflow)
+
+[CRNN 参考代码 - crnn_ctc_ocr_tf](https://github.com/bai-shang/crnn_ctc_ocr_tf)
 
 
-###  测试模型
+
+
+## 使用jupyter进行调试
+
+[./notebook/train-cn.ipynb](./notebook/train-cn.ipynb)
+
+##  测试模型
 
 ```shell script
 sh shell/test_crnn.py
 ```
+
+
