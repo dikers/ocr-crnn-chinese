@@ -53,7 +53,7 @@ echo "Start parse '$1'  , valid_rate=$2 "
 
 export PYTHONPATH=./
 echo "start --------- segment  string -- "
-python3 ./train_model/data_provider/segment_string.py  -mi 10 -ma 10 -i $1 --output_dir ${TEXT_DATA_DIR}
+python3 ./train_model/data_provider/segment_string.py  -mi 14 -ma 14 -i $1 --output_dir ${TEXT_DATA_DIR}
 
 
 TEXT_SPLIT_FILE=${TEXT_DATA_DIR}'text_split.txt'
