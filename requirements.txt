@@ -1,6 +1,6 @@
 dominate==2.3.1
 easydict==1.9
-Flask==0.10.1
+Flask==1.0
 numpy==1.18.1
 trdg==1.5.0
 tensorflow==1.15.2
