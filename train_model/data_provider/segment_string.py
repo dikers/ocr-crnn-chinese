@@ -87,6 +87,7 @@ def combined_line(output_dir,
     new_lines = []
     for line in lines:
         while True:
+            line = line.replace(' ', '').replace('\r', '').replace('\n', '').replace('\t', '')
             count = random.randint(min_chars_count, max_chars_count)
             if len(line) > count:
                 new_lines.append(line[0:count])
@@ -99,7 +100,7 @@ def combined_line(output_dir,
     with open(output_file, 'w',  encoding='utf-8') as f:
         for new_line in new_lines:
 
-            f.write(new_line.replace('\r','').replace('\n','').replace('\t','')+'\n')
+            f.write(new_line+'\n')
             print("\r{}".format(new_line))
     return output_file, len(new_lines)
 
