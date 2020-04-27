@@ -303,12 +303,12 @@ def train_shadownet_multi_gpu(dataset_dir_train, dataset_dir_val, weights_path, 
         epoch = 0
         tf.train.write_graph(graph_or_graph_def=sess.graph, logdir='',
                              name='{:s}/shadownet_model.pb'.format(save_path))
-
-        if weights_path is None:
+        if weights_path is None or not os.path.exists(weights_path):
             logger.info('Training from scratch')
             init = tf.global_variables_initializer()
             sess.run(init)
         else:
+            weights_path = tf.train.latest_checkpoint(weights_path)
             logger.info('Restore model from last model checkpoint {:s}'.format(weights_path))
             saver.restore(sess=sess, save_path=weights_path)
             epoch = sess.run(tf.train.get_global_step())
@@ -493,12 +493,13 @@ def train_shadownet(dataset_dir_train,dataset_dir_val, weights_path, char_dict_p
 
     with sess.as_default():
         epoch = 0
-        if weights_path is None:
+        if weights_path is None or not os.path.exists(weights_path):
             logger.info('Training from scratch')
             init = tf.global_variables_initializer()
             sess.run(init)
         else:
-            logger.info('Restore model from {:s}'.format(weights_path))
+            weights_path = tf.train.latest_checkpoint(weights_path)
+            logger.info('Restore model from last model checkpoint {:s}'.format(weights_path))
             saver.restore(sess=sess, save_path=weights_path)
             epoch = sess.run(tf.train.get_global_step())
 

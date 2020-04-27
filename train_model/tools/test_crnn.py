@@ -20,7 +20,7 @@ import cv2
 import numpy as np
 import tensorflow as tf
 import json
-
+import glog as logger
 from train_model.config import model_config
 from train_model.crnn_model import crnn_model
 CFG = model_config.cfg
@@ -122,6 +122,8 @@ def recognize_single_image(image_path, weights_path, char_dict_path):
 
     sess_config.gpu_options.allow_growth = True
     sess = tf.Session(config=sess_config)
+    weights_path = tf.train.latest_checkpoint(weights_path)
+    print('Restore model from last model checkpoint {:s}'.format(weights_path))
     with sess.as_default():
         saver.restore(sess=sess, save_path=weights_path)
         image = cv2.imread(image_path, cv2.IMREAD_COLOR)
@@ -142,8 +144,8 @@ def recognize_single_image(image_path, weights_path, char_dict_path):
 
 if __name__ == '__main__':
     # init images
-    image_path='../test/test_process.png'
-    weights_path='/Users/liujunyi/Documents/git/ID-CARD-OCR/source/core/step_three_recognize_process/model_save/recognize_model'
-    char_dict_path='/Users/liujunyi/Documents/git/ID-CARD-OCR/source/core/step_three_recognize_process/char_map/char_map.json'
+    image_path='output/images/train/0.jpg'
+    weights_path='output/model_save/'
+    char_dict_path='output/text_data/char_map.json'
 
     recognize_single_image(image_path,weights_path, char_dict_path)

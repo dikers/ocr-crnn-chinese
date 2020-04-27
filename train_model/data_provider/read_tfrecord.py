@@ -84,7 +84,7 @@ class CrnnDataFeeder(object):
             self._tfrecords_dir, self._dataset_flags))
         print ('{:s}/{:s}*.tfrecords'.format( \
             self._tfrecords_dir, self._dataset_flags))
-        print (tfrecords_file_paths)
+        #print (tfrecords_file_paths)
         if not tfrecords_file_paths:
             raise ValueError('Dataset does not contain any tfrecords for {:s}'.format(\
                 self._dataset_flags))

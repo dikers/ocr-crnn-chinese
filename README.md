@@ -67,3 +67,17 @@ sh ./shell/generation_cn_hw_tfrecord.sh   ./output/raw_data/cnews.train.txt  0.1
 
 
 
+
+
+###  训练模型
+
+```shell script
+sh shell/train_crnn.py
+```
+
+
+###  测试模型
+
+```shell script
+sh shell/test_crnn.py
+```
