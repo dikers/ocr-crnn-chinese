@@ -3,6 +3,6 @@ easydict==1.9
 Flask==0.10.1
 numpy==1.18.1
 trdg==1.5.0
-tensorflow==1.15.0
+tensorflow==1.15.2
 tensorflow-gpu==1.15.0
 opencv-python==4.1.0.25
