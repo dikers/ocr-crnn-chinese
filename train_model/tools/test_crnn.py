@@ -1,14 +1,19 @@
-##!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Software: PyCharm
+# @Time         :  19-11-19  23:45
+# @Author       :  Jiang Mingzhi
+# @Reference    :  https://github.com/MaybeShewill-CV/CRNN_Tensorflow
+#                  https://github.com/bai-shang/crnn_ctc_ocr.Tensorflow
+# @File         :  test_crnn_jmz.py
+# @IDE          :  PyCharm Community Edition
 """
 识别图片中的文本。需要的参数有：
     1.图片所在路径。
-    2.模型训练使用的charmap
+    2.保存有图片名称的txt文件
     3.加载模型的路径
 
 输出结果为：
-    识别的字段string
+    csv文件。
 """
 import sys
 import os
@@ -20,12 +25,37 @@ import cv2
 import numpy as np
 import tensorflow as tf
 import json
-import glog as logger
+
+
 from train_model.config import model_config
 from train_model.crnn_model import crnn_model
+from multiprocessing import Pool
 CFG = model_config.cfg
 
 
+def init_args():
+    """
+    初始化参数
+    :return: None
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--image_path', type=str,
+                        help='Path to the image to be tested',
+                        default='./output/images/train')
+    parser.add_argument('-w', '--weights_path', type=str,
+                        help='Path to the pre-trained weights to use',
+                        default='./output/model_save/')
+    parser.add_argument('-c', '--char_dict_path', type=str,
+                        help='Directory where character dictionaries for the dataset were stored',
+                        default='./output/text_data/char_map.json')
+    parser.add_argument('-t', '--txt_path', type=str,
+                        help='Whether to display images',
+                        default='./output/text_data/valid.txt')
+    parser.add_argument('-n', '--test_number', type=int,
+                        help='Test images number',
+                        default=10)
+
+    return parser.parse_args()
 
 
 def _resize_image(img):
@@ -92,23 +122,45 @@ def _int_to_string(value, char_map_dict=None):
     raise ValueError('char map dict not has {:d} value. convert index to char failed.'.format(value))
 
 
-def recognize_single_image(image_path, weights_path, char_dict_path):
+def recognize_jmz(image_path, weights_path, char_dict_path, txt_file_path, test_number):
     """
     识别函数
     :param image_path: 图片所在路径
     :param weights_path: 模型保存路径
     :param char_dict_path: 字典文件存放位置
+    :param txt_file_path: 包含图片名的txt文件
     :return: None
     """
+    
+    char_map_dict = json.load(open(char_dict_path, 'r',encoding='utf-8'))
+    num_classes = len(char_map_dict) + 1
+    print('num_classes: ',  num_classes)
+    
+    with open(txt_file_path, 'r') as f1:
+        linelist = f1.readlines()
+    
+    image_list = []   
+    for i in range(test_number):
+        image_path_temp = image_path + linelist[i].split(' ')[0]
+        image_list.append((image_path_temp, linelist[i].split(' ')[1].replace('\r','').replace('\n','').replace('\t','')))
+
+
+    for path, label in image_list:
+        print(path, label)
+    
+    
+    global reg_result
     tf.reset_default_graph()
-    inputdata = tf.placeholder(dtype=tf.float32,
-                               shape=[1, CFG.ARCH.INPUT_SIZE[1],
-                                      None, CFG.ARCH.INPUT_CHANNELS],  # 宽度可变
+
+    inputdata = tf.placeholder(dtype=tf.float32, shape=[1, CFG.ARCH.INPUT_SIZE[1], None, CFG.ARCH.INPUT_CHANNELS],  # 宽度可变
                                name='input')
     input_sequence_length = tf.placeholder(tf.int32, shape=[1], name='input_sequence_length')
+
     net = crnn_model.ShadowNet(phase='test', hidden_nums=CFG.ARCH.HIDDEN_UNITS,
-                               layers_nums=CFG.ARCH.HIDDEN_LAYERS, num_classes=CFG.ARCH.NUM_CLASSES)
+                               layers_nums=CFG.ARCH.HIDDEN_LAYERS, num_classes=num_classes)
+
     inference_ret = net.inference(inputdata=inputdata, name='shadow_net', reuse=False)
+
     decodes, _ = tf.nn.ctc_beam_search_decoder(inputs=inference_ret, sequence_length=input_sequence_length,  # 序列宽度可变
                                                merge_repeated=False, beam_width=1)
 
@@ -124,28 +176,36 @@ def recognize_single_image(image_path, weights_path, char_dict_path):
     sess = tf.Session(config=sess_config)
     weights_path = tf.train.latest_checkpoint(weights_path)
     print('Restore model from last model checkpoint {:s}'.format(weights_path))
+
+    
     with sess.as_default():
         saver.restore(sess=sess, save_path=weights_path)
-        image = cv2.imread(image_path, cv2.IMREAD_COLOR)
-        if image is None:
-            print(image_path+'is not exist')
-        image_name=image_path.split('/')[-1]
-        image = _resize_image(image)
-        image = np.array(image, np.float32) / 127.5 - 1.0
-        seq_len = np.array([image.shape[1] / 4], dtype=np.int32)
-        preds = sess.run(decodes, feed_dict={inputdata: [image], input_sequence_length:seq_len})
+        
+        for image_name, label in image_list:
+            image = cv2.imread(image_name, cv2.IMREAD_COLOR)
+            if image is None:
+                print(image_name +'is not exist')
+                continue
+#             image = _resize_image(image)
+            image = cv2.resize(image, dsize=tuple(CFG.ARCH.INPUT_SIZE), interpolation=cv2.INTER_LINEAR)
+            image = np.array(image, np.float32) / 127.5 - 1.0
+            seq_len = np.array([image.shape[1] / 4], dtype=np.int32)
+            preds = sess.run(decodes, feed_dict={inputdata: [image], input_sequence_length:seq_len})
 
-        preds = _sparse_matrix_to_list(preds[0], char_dict_path)
-        print('Predict image {:s} result: {:s}'.format(image_name, preds[0]))
+            preds = _sparse_matrix_to_list(preds[0], char_dict_path)
+            print('Label: {:30s}\tPredict: [{:s}]'.format(label, preds[0]))
 
     sess.close()
 
     return
 
+
+
 if __name__ == '__main__':
     # init images
-    image_path='output/images/train/0.jpg'
-    weights_path='output/model_save/'
-    char_dict_path='output/text_data/char_map.json'
-
-    recognize_single_image(image_path,weights_path, char_dict_path)
+    args = init_args()
+    os.environ["CUDA_VISIBLE_DEVICES"] = "0"#指定在第0块GPU上跑
+    
+    recognize_jmz(image_path=args.image_path, weights_path=args.weights_path, 
+              char_dict_path=args.char_dict_path, txt_file_path=args.txt_path,
+                 test_number=10)
