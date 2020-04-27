@@ -135,13 +135,14 @@ def _init_data_queue(img_dir, anno_file_path, char_map_path, writer_process_nums
     num_lines = sum(1 for _ in open(anno_file_path, 'r')) # 图片及标注行数
     with open(anno_file_path, 'r', encoding='utf-8') as file:
         for line in tqdm.tqdm(file, total=num_lines):
+            if len(line.split(' ')) < 2:
+                continue
             image_name, label_index = line.rstrip('\r').rstrip('\n').split(' ',1)
-            print (line)
+            print('{} {} '.format(image_name, label_index))
             #img_dir = img_dir.strip()
             #image_name = image_name.upper()
             image_path = ops.join(img_dir, image_name.strip()) # 图片地址
             #label_index = label_index.lower()
-            print(label_index)
             label_index = _string_to_int(char_map_path, label_index) # label本是字符串，转为int
             if not ops.exists(image_path):
                 print('Example image {:s} not exist'.format(image_path))
