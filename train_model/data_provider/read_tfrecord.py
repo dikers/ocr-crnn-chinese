@@ -12,7 +12,7 @@ import os.path as ops
 import random
 import glob
 import tensorflow as tf
-from source.core.step_three_recognize_process.config import model_config
+from train_model.config import model_config
 
 CFG = model_config.cfg
 

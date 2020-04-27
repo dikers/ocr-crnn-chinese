@@ -13,8 +13,8 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.contrib import rnn
 
-from source.core.step_three_recognize_process.crnn_model import cnn_basenet
-from source.core.step_three_recognize_process.config import model_config
+from train_model.crnn_model import cnn_basenet
+from train_model.config import model_config
 
 CFG = model_config.cfg
 

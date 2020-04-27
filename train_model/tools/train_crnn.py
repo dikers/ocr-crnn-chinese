@@ -24,10 +24,10 @@ from tensorflow.python.ops import math_ops
 from tensorflow.python.framework import dtypes
 from tensorflow.python.ops import random_ops
 
-from source.core.step_three_recognize_process.tools import evaluation_tools
-from source.core.step_three_recognize_process.crnn_model import crnn_model
-from source.core.step_three_recognize_process.config import model_config
-from source.core.step_three_recognize_process.data_provider import read_tfrecord
+from train_model.tools import evaluation_tools
+from train_model.crnn_model import crnn_model
+from train_model.config import model_config
+from train_model.data_provider import read_tfrecord
 
 CFG = model_config.cfg
 
