@@ -101,7 +101,8 @@ def combined_line(output_dir,
         for new_line in new_lines:
 
             f.write(new_line+'\n')
-            print("\r{}".format(new_line))
+            #print("\r{}".format(new_line))
+    print("Write {} lines in file [{}]".format(len(new_lines) , output_file))
     return output_file, len(new_lines)
 
 

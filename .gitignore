@@ -85,7 +85,9 @@ build.sh
 
 /cdk.out/
 */cdk.out/
+*/temp
 
 cdk.context.json
 
 *.zip
+*temp
