@@ -48,7 +48,7 @@ __pycache__/
 
 .ipynb_checkpoints/
 .ipynb_checkpoints/*
-.ipynb_checkpoints
+*.ipynb_checkpoints
 
 ### IntelliJ IDEA ###
 .idea
@@ -89,5 +89,7 @@ build.sh
 
 cdk.context.json
 
+*data_cn
+*data_en
 *.zip
 *temp

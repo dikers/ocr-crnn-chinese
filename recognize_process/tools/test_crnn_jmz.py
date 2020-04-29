@@ -52,6 +52,17 @@ def init_args():
 
     return parser.parse_args()
 
+def get_num_class(char_dict_path):
+    """
+    get the number of char classes automatically
+    :param char_dict_path: path for char_dictionary
+    """
+    char_map_dict = json.load(open(char_dict_path, 'r',encoding='utf-8'))
+    if char_map_dict is None:
+        print("error")
+    assert (isinstance(char_map_dict, dict) and 'char_map_dict is not a dict')
+    num_class = len(char_map_dict.keys())+1
+    return num_class
 
 def _resize_image(img):
     """
@@ -126,6 +137,10 @@ def recognize_jmz(image_path, weights_path, char_dict_path, txt_file_path):
     :param txt_file_path: 包含图片名的txt文件
     :return: None
     """
+    
+    NUM_CLASSES = get_num_class(char_dict_path)
+    
+    
     files = os.listdir(txt_file_path)
     txt_files = [txt for txt in files if txt.endswith(".txt") and txt.split(".")[0] + ".json" not in files]
 
@@ -134,7 +149,7 @@ def recognize_jmz(image_path, weights_path, char_dict_path, txt_file_path):
     input_sequence_length = tf.placeholder(tf.int32, shape=[1], name='input_sequence_length')
 
     net = crnn_model.ShadowNet(phase='test', hidden_nums=CFG.ARCH.HIDDEN_UNITS,
-                               layers_nums=CFG.ARCH.HIDDEN_LAYERS, num_classes=CFG.ARCH.NUM_CLASSES)
+                               layers_nums=CFG.ARCH.HIDDEN_LAYERS, num_classes=NUM_CLASSES)
 
     inference_ret = net.inference(inputdata=inputdata, name='shadow_net', reuse=False)
 

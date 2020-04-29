@@ -51,9 +51,9 @@ def _string_to_int(char_map_path, label):
     char_map_dict = json.load(open(char_map_path, 'r'))
     int_list = []
     for c in label:
-        #if c not in char_map_dict:
+        if c not in char_map_dict:
             #print(c, 'is not in char_map')
-            #continue
+            continue
         int_list.append(char_map_dict[c])
     return int_list
 

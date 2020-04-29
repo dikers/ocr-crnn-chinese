@@ -16,6 +16,7 @@ import os
 import os.path as ops
 import time
 import argparse
+import json
 
 import tensorflow as tf
 import numpy as np
@@ -50,6 +51,17 @@ def init_args():
 
     return parser.parse_args()
 
+def get_num_class(char_dict_path):
+    """
+    get the number of char classes automatically
+    :param char_dict_path: path for char_dictionary
+    """
+    char_map_dict = json.load(open(char_dict_path, 'r',encoding='utf-8'))
+    if char_map_dict is None:
+        print("error")
+    assert (isinstance(char_map_dict, dict) and 'char_map_dict is not a dict')
+    num_class = len(char_map_dict.keys())+1
+    return num_class
 
 ##########################################################################
 def apply_with_random_selector(x, func, num_cases):
@@ -122,10 +134,11 @@ def train_shadownet(dataset_dir, weights_path, char_dict_path, save_path):
     tf.summary.image('distord_turned_image', train_images)
 ################################################################
 
+    NUM_CLASSES = get_num_class(char_dict_path)
 
     # declare crnn net
     shadownet = crnn_model.ShadowNet(phase='train',hidden_nums=CFG.ARCH.HIDDEN_UNITS,
-        layers_nums=CFG.ARCH.HIDDEN_LAYERS, num_classes=CFG.ARCH.NUM_CLASSES)
+        layers_nums=CFG.ARCH.HIDDEN_LAYERS, num_classes=NUM_CLASSES)
     # set up training graph
     with tf.device('/gpu:0'):
         # compute loss and seq distance

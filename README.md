@@ -100,3 +100,27 @@ sh shell/test_crnn.py
 ```
 
 
+
+# 对比代码
+
+[参考代码地址](https://github.com/Mingtzge/2019-CCF-BDCI-OCR-MCZJ-OCR-IdentificationIDElement)
+
+操作步骤
+```shell
+
+cd recognize_process/shell
+
+# 生成数据
+sh generation_cn_tfrecord.sh  'YOUR_TXT_PATH'  0.2
+
+
+#sh generation_cn_tfrecord.sh  ../../output/raw_data/cnews.val.txt 0.02  # 使用前一步准备好的数据
+
+# 训练
+sh train-cn.sh
+
+# 查看测试结果
+sh test-cn.sh
+```
+
+生成数据的路径在 './recognize_process/shell/data_cn/'
