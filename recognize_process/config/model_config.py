@@ -45,7 +45,7 @@ __C.TRAIN.LR_DECAY_STEPS = 2000                    # 使用学习率指数衰减
 # Set the learning rate decay rate
 __C.TRAIN.LR_DECAY_RATE = 0.95                     # 衰减值
 # Set multi process nums
-__C.TRAIN.CPU_MULTI_PROCESS_NUMS = 20              # 多线程
+__C.TRAIN.CPU_MULTI_PROCESS_NUMS = 10              # 多线程
 # Set moving average decay
 __C.TRAIN.SAVE_STEPS = 2000                       # 每隔多少步保存一次模型
 # Set the GPU resource used during training process

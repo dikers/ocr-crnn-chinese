@@ -82,7 +82,7 @@ class CrnnDataFeeder(object):
 
         tfrecords_file_paths = glob.glob('{:s}/{:s}*.tfrecords'.format(\
             self._tfrecords_dir, self._dataset_flags))
-        print ('{:s}/{:s}*.tfrecords'.format( \
+        print('{:s}/{:s}*.tfrecords'.format(\
             self._tfrecords_dir, self._dataset_flags))
         #print (tfrecords_file_paths)
         if not tfrecords_file_paths:
