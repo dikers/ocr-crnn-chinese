@@ -192,6 +192,8 @@ def train_shadownet(dataset_dir, weights_path, char_dict_path, save_path):
             sess.run(init)
         else:
             print('Restore model from {:s}'.format(weights_path))
+            weights_path = tf.train.latest_checkpoint(weights_path)
+            print('Restore model from last model checkpoint {:s}'.format(weights_path))
             saver.restore(sess=sess, save_path=weights_path)
             epoch = sess.run(tf.train.get_global_step())
 

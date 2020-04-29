@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# @Time    : 19-11-20 0:15
+# @Author  : Miao Wenqiang
+# @Reference    :  https://github.com/MaybeShewill-CV/CRNN_Tensorflow
+#                  https://github.com/bai-shang/crnn_ctc_ocr.Tensorflow
 # @File    : read_tfrecord.py
 # @IDE: PyCharm
 """
@@ -27,7 +31,7 @@ class CrnnDataFeeder(object):
 
         self._dataset_flags = flags.lower()
         if self._dataset_flags not in ['train', 'test', 'val']:
-            raise ValueError('flags of the dataset feeder should be \'train\', \'test\', \'val\'')
+            raise ValueError('flags of the data feeder should be \'train\', \'test\', \'val\'')
 
         self._char_dict_path = char_dict_path
 
@@ -82,9 +86,6 @@ class CrnnDataFeeder(object):
 
         tfrecords_file_paths = glob.glob('{:s}/{:s}*.tfrecords'.format(\
             self._tfrecords_dir, self._dataset_flags))
-        print('{:s}/{:s}*.tfrecords'.format(\
-            self._tfrecords_dir, self._dataset_flags))
-        #print (tfrecords_file_paths)
         if not tfrecords_file_paths:
             raise ValueError('Dataset does not contain any tfrecords for {:s}'.format(\
                 self._dataset_flags))

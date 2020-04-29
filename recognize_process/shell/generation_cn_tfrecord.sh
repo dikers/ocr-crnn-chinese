@@ -79,6 +79,7 @@ python ../data_provider/write_tfrecord.py \
 --dataset_dir=${BASE_DIR}'images/train' \
 --char_dict_path=${BASE_DIR}'char_map.json' \
 --anno_file_path=${BASE_DIR}'train_labels.txt' \
+--dataset_flag='train' \
 --save_dir=${BASE_DIR}'tfrecords/train/'
 
 
@@ -86,6 +87,7 @@ python ../data_provider/write_tfrecord.py \
 --dataset_dir=${BASE_DIR}'images/valid' \
 --char_dict_path=${BASE_DIR}'char_map.json' \
 --anno_file_path=${BASE_DIR}'valid_labels.txt' \
+--dataset_flag='val' \
 --save_dir=${BASE_DIR}'tfrecords/valid/'
 
 

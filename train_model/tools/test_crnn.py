@@ -208,4 +208,4 @@ if __name__ == '__main__':
     
     recognize_jmz(image_path=args.image_path, weights_path=args.weights_path, 
               char_dict_path=args.char_dict_path, txt_file_path=args.txt_path,
-                 test_number=10)
+                 test_number=20)

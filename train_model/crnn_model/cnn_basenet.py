@@ -238,7 +238,7 @@ class CNNBaseModel(object):
         """
         shape = inputdata.get_shape().as_list()
         if len(shape) != 4:
-            raise ValueError("Input dataset of instancebn layer has to be 4D tensor")
+            raise ValueError("Input data of instancebn layer has to be 4D tensor")
 
         if data_format == 'NHWC':
             axis = [1, 2]
@@ -396,8 +396,8 @@ class CNNBaseModel(object):
         # ======================== Checking valid values =========================
         if data_format not in ['NHWC', 'NCHW']:
             raise TypeError(
-                "Only two dataset formats are supported at this moment: 'NHWC' or 'NCHW', "
-                "%s is an unknown dataset format." % data_format)
+                "Only two data formats are supported at this moment: 'NHWC' or 'NCHW', "
+                "%s is an unknown data format." % data_format)
         assert type(list_input) == list
 
         # ======================== Setting default values =========================

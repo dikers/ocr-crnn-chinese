@@ -45,7 +45,7 @@ __C.TRAIN.LR_DECAY_RATE = 0.95                     # 衰减值
 # Set multi process nums
 __C.TRAIN.CPU_MULTI_PROCESS_NUMS = 10              # 多线程
 # Set moving average decay
-__C.TRAIN.SAVE_STEPS = 2000                       # 每隔多少步保存一次模型
+__C.TRAIN.SAVE_STEPS = 1000                       # 每隔多少步保存一次模型
 # Set the GPU resource used during training process
 __C.TRAIN.GPU_MEMORY_FRACTION = 0.9                # 允许占用GPU运存的最大比例
 # Set the GPU allow growth parameter during tensorflow training process

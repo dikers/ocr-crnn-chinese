@@ -398,16 +398,12 @@ def train_shadownet(dataset_dir_train,dataset_dir_val, weights_path, char_dict_p
     """
     训练网络，参考：
     https://github.com/MaybeShewill-CV/CRNN_Tensorflow
-    :param dataset_dir_train: train tfrecord文件路径
-    :param dataset_dir_val: train tfrecord文件路径
+    :param dataset_dir: tfrecord文件路径
     :param weights_path: 要加载的预训练模型路径
     :param char_dict_path: 字典文件路径
     :param save_path: 模型保存路径
     :return: None
     """
-    #caculdate num_class
-    NUM_CLASSES = get_num_class(char_dict_path)
-
     # prepare dataset
     train_dataset = read_tfrecord.CrnnDataFeeder(
         dataset_dir=dataset_dir_train, char_dict_path=char_dict_path, flags='train')
@@ -415,41 +411,29 @@ def train_shadownet(dataset_dir_train,dataset_dir_val, weights_path, char_dict_p
     train_images, train_labels, train_images_paths = train_dataset.inputs(
         batch_size=CFG.TRAIN.BATCH_SIZE)
 
-    val_dataset = read_tfrecord.CrnnDataFeeder(
-        dataset_dir=dataset_dir_val, char_dict_path=char_dict_path, flags='val')
+####################添加数据增强##############################
+    # train_images = tf.multiply(tf.add(train_images, 1.0), 128.0)   # removed since read_tfrecord.py is changed
+    tf.summary.image('original_image', train_images)   # 保存到log，方便测试观察
+    images = apply_with_random_selector(
+        train_images,
+        lambda x, ordering: distort_color(x, ordering),
+        num_cases=2)  #
+    images = tf.subtract(tf.divide(images, 127.5), 1.0)  # 转化到【-1，1】 changed 128.0 to 127.5 
+    train_images = tf.clip_by_value(images, -1.0, 1.0)
+    tf.summary.image('distord_turned_image', train_images)
+################################################################
 
-    val_images, val_labels, val_images_paths = val_dataset.inputs(
-        batch_size=CFG.TRAIN.BATCH_SIZE)
-
+    NUM_CLASSES = get_num_class(char_dict_path)
 
     # declare crnn net
     shadownet = crnn_model.ShadowNet(phase='train',hidden_nums=CFG.ARCH.HIDDEN_UNITS,
         layers_nums=CFG.ARCH.HIDDEN_LAYERS, num_classes=NUM_CLASSES)
-    shadownet_val = crnn_model.ShadowNet(phase='test',hidden_nums=CFG.ARCH.HIDDEN_UNITS,
-                                     layers_nums=CFG.ARCH.HIDDEN_LAYERS, num_classes=NUM_CLASSES)
-
+    
     # set up training graph
     with tf.device('/gpu:0'):
         # compute loss and seq distance
         train_inference_ret, train_ctc_loss = shadownet.compute_loss(inputdata=train_images,
-                                                                     labels=train_labels,
-                                                                     name='shadow_net',
-                                                                     reuse=False)
-        val_inference_ret, val_ctc_loss = shadownet_val.compute_loss(inputdata=val_images,
-                                                                         labels=val_labels,
-                                                                         name='shadow_net',
-                                                                         reuse=True)
-        train_decoded, train_log_prob = tf.nn.ctc_beam_search_decoder(
-            train_inference_ret,
-            CFG.ARCH.SEQ_LENGTH * np.ones(CFG.TRAIN.BATCH_SIZE),
-            merge_repeated=False
-        )
-        val_decoded, val_log_prob = tf.nn.ctc_beam_search_decoder(
-            val_inference_ret,
-            CFG.ARCH.SEQ_LENGTH * np.ones(CFG.TRAIN.BATCH_SIZE),
-            merge_repeated=False
-        )
-
+            labels=train_labels, name='shadow_net', reuse=False)
 
         # set learning rate
         global_step = tf.Variable(0, name='global_step', trainable=False)
@@ -469,8 +453,7 @@ def train_shadownet(dataset_dir_train,dataset_dir_val, weights_path, char_dict_p
     # Set tf summary
     os.makedirs(save_path, exist_ok=True)
     tf.summary.scalar(name='train_ctc_loss', tensor=train_ctc_loss)
-    tf.summary.scalar(name='val_ctc_loss', tensor=val_ctc_loss)
-    tf.summary.scalar(name='learning_rate', tensor=learning_rate)
+    tf.summary.scalar(name='learning_rate',  tensor=learning_rate)
     merge_summary_op = tf.summary.merge_all()
 
     # Set saver configuration
@@ -493,36 +476,29 @@ def train_shadownet(dataset_dir_train,dataset_dir_val, weights_path, char_dict_p
 
     with sess.as_default():
         epoch = 0
-        if weights_path is None or not os.path.exists(weights_path):
-            logger.info('Training from scratch')
+        if weights_path is None:
+            print('Training from scratch')
             init = tf.global_variables_initializer()
             sess.run(init)
         else:
             weights_path = tf.train.latest_checkpoint(weights_path)
-            logger.info('Restore model from last model checkpoint {:s}'.format(weights_path))
+            print('Restore model from last model checkpoint {:s}'.format(weights_path))
             saver.restore(sess=sess, save_path=weights_path)
             epoch = sess.run(tf.train.get_global_step())
 
         cost_history = [np.inf]
         while epoch < train_epochs:
             epoch += 1
-            _, train_ctc_loss_value, merge_summary_value, learning_rate_value, train_labels_sparse, train_predictions= sess.run(
-                    [optimizer, train_ctc_loss, merge_summary_op, learning_rate, train_labels, train_decoded])
-
-            val_ctc_loss_value = sess.run([val_ctc_loss])
-
-            train_labels_str = _sparse_matrix_to_list(train_labels_sparse[0], char_dict_path)
-            train_predictions = _sparse_matrix_to_list(train_predictions[0], char_dict_path)
-            avg_train_accuracy = evaluation_tools.compute_accuracy(train_labels_str, train_predictions)
+            _, train_ctc_loss_value, merge_summary_value, learning_rate_value = sess.run(
+                [optimizer, train_ctc_loss, merge_summary_op, learning_rate])
 
             if (epoch+1) % CFG.TRAIN.DISPLAY_STEP == 0:
-                logger.info('lr={:9f}  step:{:7d}   train loss= {:9f} val loss = {:9f}'.format( \
-                    learning_rate_value, epoch+1, train_ctc_loss_value, val_ctc_loss_value))
+                
+                print('lr={:.5f}  step:{:7d} train_loss={:.5f}   '.format(\
+                    learning_rate_value, epoch+1, train_ctc_loss_value))
                 # record history train ctc loss
-                logger.info("train_predictions: ", train_predictions)
-                logger.info("accuracy: ", avg_train_accuracy)
                 cost_history.append(train_ctc_loss_value)
-                # add training sumary
+                 # add training sumary
                 summary_writer.add_summary(summary=merge_summary_value, global_step=epoch)
 
             if (epoch+1) % CFG.TRAIN.SAVE_STEPS == 0:
@@ -534,11 +510,9 @@ def train_shadownet(dataset_dir_train,dataset_dir_val, weights_path, char_dict_p
 if __name__ == '__main__':
     # init args
     args = init_args()
-    # time.sleep(7200)
-    # time.sleep(4800)
     logger.info('start')
     if args.multi_gpus:
-        logger.info('Use multi gpus to train the model')
+        logger.info('**************** Use multi gpus to train the model')
         train_shadownet_multi_gpu(
             dataset_dir_train=args.train_dataset_dir,
             dataset_dir_val=args.val_dataset_dir,
@@ -547,7 +521,7 @@ if __name__ == '__main__':
             save_path=args.save_path
         )
     else:
-        logger.info('Use single gpu to train the model')
+        logger.info('***************** Use single gpu to train the model')
         train_shadownet(
             dataset_dir_train=args.train_dataset_dir,
             dataset_dir_val=args.val_dataset_dir,

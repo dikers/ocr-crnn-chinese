@@ -39,7 +39,9 @@ def compute_accuracy(ground_truth, predictions, display=False, mode='per_char'):
         accuracy = []
 
         for index, label in enumerate(ground_truth):
+            
             prediction = predictions[index]
+            print('index= {} label= [{}] , prediction=[{}]'.format(index, label, prediction) )
             total_count = len(label)
             correct_count = 0
             try:
