@@ -19,7 +19,7 @@ import tqdm
 import json
 import cv2
 
-from crnn_v3.config import global_config
+from crnn_ctc.config import global_config
 
 CFG = global_config.cfg
 

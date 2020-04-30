@@ -42,7 +42,7 @@ sh ./shell/get_sample_data.sh
 ##  训练脚本说明  
 
 ```shell script
-cd ./crnn_v3
+cd ./crnn_ctc
 tree -L 1
 
 ├── data_cn                         #中文训练临时文件夹
@@ -69,21 +69,25 @@ tree -L 1
 
 ```shell script
 
-cd ./crnn_v3
+cd ./crnn_ctc
+
+sh generation_en_tfrecord.sh   10000  0.2    # 生成英文数据
 
 sh generation_cn_tfrecord.sh  ../../sample_data/test.txt  0.2    #很少的数据， 用于验证环境是否正常
 
-#sh generation_cn_tfrecord.sh  ../../output/raw_data/cnews.val.txt 0.02  # 使用前一步准备好的数据
+sh generation_cn_tfrecord.sh  ../../output/raw_data/cnews.val.txt 0.02  # 使用前一步准备好的数据
 
 # 进行训练
 sh train-cn.sh
+sh train-en.sh
 
 # 测试模型
 sh test-cn.sh
+sh test-en.sh
 
+
+cd ./data_cn
 tree -L 1
-
-
 .
 ├── char_dict.json
 ├── char_map.json
