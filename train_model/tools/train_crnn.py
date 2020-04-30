@@ -167,7 +167,7 @@ def compute_net_gradients(images, labels, net, optimizer=None, is_net_first_init
 
     return net_loss, grads
 
-def train_shadownet_multi_gpu(dataset_dir_train, dataset_dir_val, weights_path, char_dict_path, save_path):
+def train_shadownet_multi_gpu(dataset_dir_train, dataset_dir_val, weights_path, char_dict_path, model_save_dir):
     """
 
     :param dataset_dir:
@@ -179,20 +179,21 @@ def train_shadownet_multi_gpu(dataset_dir_train, dataset_dir_val, weights_path, 
     #caculdate num_class
 
     NUM_CLASSES = get_num_class(char_dict_path)
-
-    # prepare dataset
     train_dataset = read_tfrecord.CrnnDataFeeder(
-        dataset_dir=dataset_dir_train, char_dict_path=char_dict_path, flags='train')
-
-    train_images, train_labels, train_images_paths = train_dataset.inputs(
-        batch_size=CFG.TRAIN.BATCH_SIZE)
+        dataset_dir=dataset_dir_train,
+        char_dict_path=char_dict_path,
+        flags='train')
 
     val_dataset = read_tfrecord.CrnnDataFeeder(
-        dataset_dir=dataset_dir_val, char_dict_path=char_dict_path, flags='valid')
+        dataset_dir=dataset_dir_val,
+        char_dict_path=char_dict_path,
+        flags='valid')
 
+    train_images, train_labels, train_images_paths = train_dataset.inputs(
+        batch_size=CFG.TRAIN.BATCH_SIZE
+    )
     val_images, val_labels, val_images_paths = val_dataset.inputs(
         batch_size=CFG.TRAIN.BATCH_SIZE)
-
 
     # set crnn net
     shadownet = crnn_model.ShadowNet(
@@ -270,19 +271,28 @@ def train_shadownet_multi_gpu(dataset_dir_train, dataset_dir_val, weights_path, 
                         batchnorm_updates_op)
 
     # set tensorflow summary
-    os.makedirs(save_path, exist_ok=True)
-    avg_train_loss_scalar = tf.summary.scalar(name='train_ctc_loss', tensor=avg_train_loss)
-    learning_rate_scalar = tf.summary.scalar(name='learning_rate', tensor=learning_rate)
-    avg_val_loss_scalar = tf.summary.scalar(name='val_ctc_loss', tensor=avg_val_loss)
-    train_merge_summary_op = tf.summary.merge([avg_train_loss_scalar, learning_rate_scalar])
-    val_merge_summary_op = tf.summary.merge([avg_val_loss_scalar])
+    tboard_save_path = model_save_dir
+    os.makedirs(model_save_dir, exist_ok=True)
 
+    summary_writer = tf.summary.FileWriter(tboard_save_path)
+
+    avg_train_loss_scalar = tf.summary.scalar(name='average_train_loss',
+                                              tensor=avg_train_loss)
+    avg_val_loss_scalar = tf.summary.scalar(name='average_val_loss',
+                                            tensor=avg_val_loss)
+    learning_rate_scalar = tf.summary.scalar(name='learning_rate_scalar',
+                                             tensor=learning_rate)
+    train_merge_summary_op = tf.summary.merge(
+        [avg_train_loss_scalar, learning_rate_scalar] + train_summary_op_updates
+    )
+    val_merge_summary_op = tf.summary.merge([avg_val_loss_scalar])
 
     # set tensorflow saver
     saver = tf.train.Saver()
+    os.makedirs(model_save_dir, exist_ok=True)
     train_start_time = time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime(time.time()))
     model_name = 'shadownet_{:s}.ckpt'.format(str(train_start_time))
-    model_save_path = ops.join(save_path, model_name)
+    model_save_path = ops.join(model_save_dir, model_name)
 
     # set sess config
     sess_config = tf.ConfigProto(device_count={'GPU': CFG.TRAIN.GPU_NUM}, allow_soft_placement=True)
@@ -290,10 +300,11 @@ def train_shadownet_multi_gpu(dataset_dir_train, dataset_dir_val, weights_path, 
     sess_config.gpu_options.allow_growth = CFG.TRAIN.TF_ALLOW_GROWTH
     sess_config.gpu_options.allocator_type = 'BFC'
 
-    summary_writer = tf.summary.FileWriter(save_path)
-
     # Set the training parameters
     train_epochs = CFG.TRAIN.EPOCHS
+
+    logger.info('Global configuration is as follows:')
+    logger.info(CFG)
 
     sess = tf.Session(config=sess_config)
 
@@ -302,8 +313,9 @@ def train_shadownet_multi_gpu(dataset_dir_train, dataset_dir_val, weights_path, 
     with sess.as_default():
         epoch = 0
         tf.train.write_graph(graph_or_graph_def=sess.graph, logdir='',
-                             name='{:s}/shadownet_model.pb'.format(save_path))
-        if weights_path is None or not os.path.exists(weights_path):
+                             name='{:s}/shadownet_model.pb'.format(model_save_dir))
+
+        if weights_path is None or not os.path.exists(weights_path) or len(os.listdir(weights_path)) < 5:
             logger.info('Training from scratch')
             init = tf.global_variables_initializer()
             sess.run(init)
@@ -336,31 +348,39 @@ def train_shadownet_multi_gpu(dataset_dir_train, dataset_dir_val, weights_path, 
             summary_writer.add_summary(summary=train_summary,
                                        global_step=epoch)
 
-            # validation part
-            t_start_val = time.time()
 
-            val_loss_value, val_summary = \
-                sess.run(fetches=[avg_val_loss,
-                                  val_merge_summary_op])
-
-            summary_writer.add_summary(val_summary, global_step=epoch)
-
-            cost_time_val = time.time() - t_start_val
-            val_cost_time_mean.append(cost_time_val)
 
             if epoch % CFG.TRAIN.DISPLAY_STEP == 0:
-                
-                logger.info('lr={:7f} step:{:7d} train_loss={:9f}  val_loss= {:9f}  mean_cost_time= {:5f}' .format( \
-                    lr, epoch+1, train_loss_value, val_loss_value, np.mean(train_cost_time_mean)))
+                logger.info('Epoch_Train: {:d} total_loss= {:6f} '
+                            'lr= {:6f} mean_cost_time= {:5f}s '.
+                            format(epoch + 1,
+                                   train_loss_value,
+                                   lr,
+                                   np.mean(train_cost_time_mean)
+                                   ))
+                train_cost_time_mean.clear()
 
-                #logger.info('Learning_rate = {:9f}    Step_Train: {:d}   validation loss= {:9f} mean_cost_time= {:5f}' .format( \
-                #    lr, epoch+1, val_loss_value, np.mean(val_cost_time_mean)))
+            if epoch % CFG.TRAIN.VAL_DISPLAY_STEP == 0:
+                # validation part
+                t_start_val = time.time()
 
+                val_loss_value, val_summary = \
+                    sess.run(fetches=[avg_val_loss,
+                                      val_merge_summary_op])
 
+                summary_writer.add_summary(val_summary, global_step=epoch)
 
-            if (epoch+1) % CFG.TRAIN.SAVE_STEPS == 0:
+                cost_time_val = time.time() - t_start_val
+                val_cost_time_mean.append(cost_time_val)
+                logger.info('Epoch_Val: {:d} total_loss= {:6f} '
+                            ' mean_cost_time= {:5f}s '.
+                            format(epoch + 1,
+                                   val_loss_value,
+                                   np.mean(val_cost_time_mean)))
+                val_cost_time_mean.clear()
+
+            if epoch % CFG.TRAIN.VAL_DISPLAY_STEP == 0:
                 saver.save(sess=sess, save_path=model_save_path, global_step=epoch)
-
     sess.close()
 
     return
@@ -394,7 +414,7 @@ def _sparse_matrix_to_list(sparse_matrix, char_map_dict_path=None):
         string_list.append(''.join(s for s in string if s != '*'))
     return string_list
 
-def train_shadownet(dataset_dir_train,dataset_dir_val, weights_path, char_dict_path, save_path):
+def train_shadownet(dataset_dir_train,dataset_dir_val, weights_path, char_dict_path, model_save_dir):
     """
     训练网络，参考：
     https://github.com/MaybeShewill-CV/CRNN_Tensorflow
@@ -460,7 +480,7 @@ def train_shadownet(dataset_dir_train,dataset_dir_val, weights_path, char_dict_p
     saver = tf.train.Saver()
     train_start_time = time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime(time.time()))
     model_name = 'shadownet_{:s}.ckpt'.format(str(train_start_time))
-    model_save_path = ops.join(save_path, model_name)
+    model_save_path = ops.join(model_save_dir, model_name)
 
     # Set sess configuration
     sess_config = tf.ConfigProto(allow_soft_placement=True)
@@ -468,7 +488,7 @@ def train_shadownet(dataset_dir_train,dataset_dir_val, weights_path, char_dict_p
     sess_config.gpu_options.allow_growth = CFG.TRAIN.TF_ALLOW_GROWTH
     sess = tf.Session(config=sess_config)
 
-    summary_writer = tf.summary.FileWriter(save_path)
+    summary_writer = tf.summary.FileWriter(model_save_dir)
     summary_writer.add_graph(sess.graph)
 
     # Set the training parameters
@@ -520,7 +540,7 @@ if __name__ == '__main__':
             dataset_dir_val=args.val_dataset_dir,
             weights_path=args.weights_path,
             char_dict_path=args.char_dict_path,
-            save_path=args.save_path
+            model_save_dir=args.save_path
         )
     else:
         logger.info('***************** Use single gpu to train the model')
@@ -529,5 +549,5 @@ if __name__ == '__main__':
             dataset_dir_val=args.val_dataset_dir,
             weights_path=args.weights_path,
             char_dict_path=args.char_dict_path,
-            save_path=args.save_path
+            model_save_dir=args.save_path
         )
