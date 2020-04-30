@@ -33,11 +33,11 @@ __C.TRAIN.EPOCHS = 500000                          # 训练终止步数
 # Set the display step
 __C.TRAIN.DISPLAY_STEP = 100                     # 训练过程中可视化步数
 # Set the initial learning rate
-__C.TRAIN.LEARNING_RATE = 0.05          # 初始学习率
+__C.TRAIN.LEARNING_RATE = 0.01          # 初始学习率
 # Set the shadownet training batch size
 __C.TRAIN.BATCH_SIZE = 64                          # batch_size
 # Set the learning rate decay steps
-__C.TRAIN.LR_DECAY_STEPS = 3000                    # 使用学习率指数衰减，衰减步幅
+__C.TRAIN.LR_DECAY_STEPS = 5000                    # 使用学习率指数衰减，衰减步幅
 # Set the learning rate decay rate
 __C.TRAIN.LR_DECAY_RATE = 0.95                     # 衰减值
 # Set multi process nums

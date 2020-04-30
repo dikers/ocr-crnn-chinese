@@ -188,7 +188,7 @@ def train_shadownet_multi_gpu(dataset_dir_train, dataset_dir_val, weights_path, 
         batch_size=CFG.TRAIN.BATCH_SIZE)
 
     val_dataset = read_tfrecord.CrnnDataFeeder(
-        dataset_dir=dataset_dir_val, char_dict_path=char_dict_path, flags='val')
+        dataset_dir=dataset_dir_val, char_dict_path=char_dict_path, flags='valid')
 
     val_images, val_labels, val_images_paths = val_dataset.inputs(
         batch_size=CFG.TRAIN.BATCH_SIZE)

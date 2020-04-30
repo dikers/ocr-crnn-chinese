@@ -31,7 +31,7 @@ def init_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--dataset_dir', type=str, help='The origin synth90k dataset_dir', default=None)
     parser.add_argument('-s', '--save_dir', type=str, help='The generated tfrecords save dir', default=None)
-    parser.add_argument('-f', '--dataset_flag', type=str, help='The generated tfrecords flag [train val test]', default='train')
+    parser.add_argument('-f', '--dataset_flag', type=str, help='The generated tfrecords flag [train valid test]', default='train')
     
     
     parser.add_argument('-c', '--char_dict_path', type=str, default='./step_three_recognize_process/char_map/char_map.json',

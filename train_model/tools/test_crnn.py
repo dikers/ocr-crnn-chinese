@@ -32,6 +32,10 @@ from train_model.crnn_model import crnn_model
 from multiprocessing import Pool
 CFG = model_config.cfg
 
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"  
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
+
 
 def init_args():
     """
@@ -201,7 +205,6 @@ def recognize_jmz(image_path, weights_path, char_dict_path, txt_file_path, test_
 if __name__ == '__main__':
     # init images
     args = init_args()
-    os.environ["CUDA_VISIBLE_DEVICES"] = "-1"#指定CPU
     
     recognize_jmz(image_path=args.image_path, weights_path=args.weights_path, 
               char_dict_path=args.char_dict_path, txt_file_path=args.txt_path,

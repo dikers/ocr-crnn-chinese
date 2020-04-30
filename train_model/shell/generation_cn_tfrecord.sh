@@ -45,6 +45,10 @@ tail -n ${val_count}   ${BASE_DIR}'text_split.txt'  > ${BASE_DIR}'valid.txt'
 if [ ! -d ${BASE_DIR}"tfrecords" ]
 then
     mkdir ${BASE_DIR}"tfrecords"
+else
+    cd ${BASE_DIR}"tfrecords"
+    rm -fr *
+    cd -
 fi
 
 if [ ! -d ${BASE_DIR}"images" ]
@@ -79,6 +83,7 @@ python ../data_provider/write_tfrecord.py \
 --dataset_dir=${BASE_DIR}'images/train' \
 --char_dict_path=${BASE_DIR}'char_map.json' \
 --anno_file_path=${BASE_DIR}'train_labels.txt' \
+--dataset_flag='train' \
 --save_dir=${BASE_DIR}'tfrecords/train/'
 
 
@@ -86,6 +91,7 @@ python ../data_provider/write_tfrecord.py \
 --dataset_dir=${BASE_DIR}'images/valid' \
 --char_dict_path=${BASE_DIR}'char_map.json' \
 --anno_file_path=${BASE_DIR}'valid_labels.txt' \
+--dataset_flag='valid' \
 --save_dir=${BASE_DIR}'tfrecords/valid/'
 
 
