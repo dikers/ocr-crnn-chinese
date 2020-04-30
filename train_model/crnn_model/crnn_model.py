@@ -13,8 +13,8 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.contrib import rnn
 
-from train_model.crnn_model import cnn_basenet
-from train_model.config import model_config
+from crnn_model import cnn_basenet
+from config import model_config
 
 CFG = model_config.cfg
 

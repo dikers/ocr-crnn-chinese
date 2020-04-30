@@ -27,8 +27,8 @@ import tensorflow as tf
 import json
 
 
-from train_model.config import model_config
-from train_model.crnn_model import crnn_model
+from config import model_config
+from crnn_model import crnn_model
 from multiprocessing import Pool
 CFG = model_config.cfg
 
@@ -208,4 +208,4 @@ if __name__ == '__main__':
     
     recognize_jmz(image_path=args.image_path, weights_path=args.weights_path, 
               char_dict_path=args.char_dict_path, txt_file_path=args.txt_path,
-                 test_number=20)
+                 test_number=10)
