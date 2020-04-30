@@ -83,8 +83,8 @@ def generate_char_map(lines, output_dir):
         char_map['{}_ord'.format(ord(char))] = char
         index += 1
 
-    char_map_json_file = os.path.join(output_dir, 'char_dict_en.json')
-    ord_map_json_file = os.path.join(output_dir, 'ord_map_en.json')
+    char_map_json_file = os.path.join(output_dir, 'char_dict.json')
+    ord_map_json_file = os.path.join(output_dir, 'ord_map.json')
 
     json_string = json.dumps(char_map, ensure_ascii=False, indent=1)
     with open(char_map_json_file, 'w', encoding='utf-8') as f:
