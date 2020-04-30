@@ -186,12 +186,11 @@ def train_shadownet(dataset_dir, weights_path, char_dict_path, save_path):
 
     with sess.as_default():
         epoch = 0
-        if weights_path is None:
+        if if weights_path is None or not os.path.exists(weights_path) or len(os.listdir(weights_path)) < 5:
             print('Training from scratch')
             init = tf.global_variables_initializer()
             sess.run(init)
         else:
-            print('Restore model from {:s}'.format(weights_path))
             weights_path = tf.train.latest_checkpoint(weights_path)
             print('Restore model from last model checkpoint {:s}'.format(weights_path))
             saver.restore(sess=sess, save_path=weights_path)
@@ -204,7 +203,7 @@ def train_shadownet(dataset_dir, weights_path, char_dict_path, save_path):
                 [optimizer, train_ctc_loss, merge_summary_op, learning_rate])
 
             if (epoch+1) % CFG.TRAIN.DISPLAY_STEP == 0:
-                print('Leearning_rate = {:9f}         Step_Train: {:d}         cost= {:9f}'.format(\
+                print('lr = {:9f}   epoch : {:d}     cost= {:9f}'.format(\
                     learning_rate_value, epoch+1, train_ctc_loss_value))
                 # record history train ctc loss
                 cost_history.append(train_ctc_loss_value)
@@ -220,9 +219,7 @@ def train_shadownet(dataset_dir, weights_path, char_dict_path, save_path):
 if __name__ == '__main__':
     # init args
     args = init_args()
-    # time.sleep(7200)
-    # time.sleep(4800)
-    print('start')
+    print('start------------------------------------ train ')
     train_shadownet(
         dataset_dir=args.dataset_dir,
         weights_path=args.weights_path,

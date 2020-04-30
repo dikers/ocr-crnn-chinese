@@ -1,4 +1,4 @@
-DATA_TARGET_DIR='../../train_model/shell/data_cn/'
+DATA_TARGET_DIR='./data_cn/'
 export PYTHONPATH=../
 
 python3 ../tools/train_shadownet.py \

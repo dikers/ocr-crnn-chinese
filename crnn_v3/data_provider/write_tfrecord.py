@@ -138,7 +138,7 @@ def _init_data_queue(img_dir, anno_file_path, char_map_path, writer_process_nums
             if len(line.split(' ')) < 2:
                 continue
             image_name, label_index = line.rstrip('\r').rstrip('\n').split(' ',1)
-            print('{} {} '.format(image_name, label_index))
+            #print('{} {} '.format(image_name, label_index))
             #img_dir = img_dir.strip()
             #image_name = image_name.upper()
             image_path = ops.join(img_dir, image_name.strip()) # 图片地址

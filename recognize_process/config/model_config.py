@@ -27,8 +27,6 @@ __C.ARCH.SEQ_LENGTH = 70  # cn dataset
 __C.ARCH.INPUT_SIZE = (280, 32)                    # 输入图片宽高
 # Number of channels in images
 __C.ARCH.INPUT_CHANNELS = 3                        # 输入channel
-# Number character classes
-#__C.ARCH.NUM_CLASSES = 6031                        # 识别的字符类别数+1（含空格）
 
 # Train options
 __C.TRAIN = edict()

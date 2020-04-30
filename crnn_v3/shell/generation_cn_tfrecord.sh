@@ -18,13 +18,13 @@ fi
 
 export PYTHONPATH=../../
 echo "start --------- segment  string -- "
-python3 ../../train_model/data_provider/segment_string.py -mi 14 -ma 14 -i $1 --output_dir ${BASE_DIR}
+python3 ../../utils/segment_string.py -mi 14 -ma 14 -i $1 --output_dir ${BASE_DIR}
 
 echo 'input file line count: '
 wc -l $1
 
 echo "start --------- generate  image --"
-TOTAL_COUNT=$(wc -l ${BASE_DIR}'/text_split.txt' | awk '{print $1}')
+TOTAL_COUNT=$(wc -l ${BASE_DIR}'text_split.txt' | awk '{print $1}')
 
 echo 'val_rate: ' $2 ' count ' ${TOTAL_COUNT}
 
@@ -80,7 +80,7 @@ python ../data_provider/write_tfrecord.py \
 --char_dict_path=${BASE_DIR}'char_map.json' \
 --anno_file_path=${BASE_DIR}'train_labels.txt' \
 --dataset_flag='train' \
---save_dir=${BASE_DIR}'tfrecords/train/'
+--save_dir=${BASE_DIR}'tfrecords'
 
 
 python ../data_provider/write_tfrecord.py \
@@ -88,7 +88,7 @@ python ../data_provider/write_tfrecord.py \
 --char_dict_path=${BASE_DIR}'char_map.json' \
 --anno_file_path=${BASE_DIR}'valid_labels.txt' \
 --dataset_flag='val' \
---save_dir=${BASE_DIR}'tfrecords/valid/'
+--save_dir=${BASE_DIR}'tfrecords/'
 
 
 

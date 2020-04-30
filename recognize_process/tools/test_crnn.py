@@ -30,6 +30,9 @@ from recognize_process.crnn_model import crnn_model
 from multiprocessing import Pool
 CFG = model_config.cfg
 
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"  
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 
 def init_args():
     """
@@ -127,7 +130,7 @@ def _int_to_string(value, char_map_dict=None):
             return ""
     raise ValueError('char map dict not has {:d} value. convert index to char failed.'.format(value))
 
-def recognize_jmz(image_path, weights_path, char_dict_path, txt_file_path):
+def recognize_jmz(image_path, weights_path, char_dict_path, txt_file_path, test_count):
     """
     识别函数
     :param image_path: 图片所在路径
@@ -172,7 +175,8 @@ def recognize_jmz(image_path, weights_path, char_dict_path, txt_file_path):
         with open(txt_file_path, 'r') as fd:
             lines = [line.strip() for line in fd.readlines()]
             
-            for line in lines:
+            for i in range(test_count):
+                line = lines[i]
                 image_name = line.split(' ')[0]
                 label = line.split(' ')[1]
                 image_paths = os.path.join(image_path, image_name)
@@ -200,4 +204,4 @@ if __name__ == '__main__':
     # os.environ["CUDA_VISIBLE_DEVICES"] = "2"#指定在第0块GPU上跑
         # pool.apply_async(recognize, (args.image_path, args.weights_path, args.char_dict_path, os.path.join(args.txt_path,txt_file), ))
     recognize_jmz(image_path=args.image_path, weights_path=args.weights_path, 
-              char_dict_path=args.char_dict_path, txt_file_path=args.txt_path)
+              char_dict_path=args.char_dict_path, txt_file_path=args.txt_path, test_count=20)

@@ -19,6 +19,11 @@ pip install -r requirements.txt -i https://mirrors.163.com/pypi/simple/
 sh ./shell/get_sample_data.sh
 ```
 
+## 英文字符数据集
+```shell script
+sh ./shell/get_mjsynth_data
+```
+
 
 ##  生成tfrecord记录  
 

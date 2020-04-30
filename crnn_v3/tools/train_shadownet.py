@@ -306,7 +306,7 @@ def train_shadownet(dataset_dir, weights_path, char_dict_path, ord_map_dict_path
                                 format(CFG.TRAIN.PATIENCE_DELTA, patience_counter))
                     break
 
-            if need_decode and epoch % 500 == 0:
+            if need_decode and epoch % CFG.TRAIN.DISPLAY_STEP == 0:
                 # train part
                 _, train_ctc_loss_value, train_seq_dist_value, \
                     train_predictions, train_labels_sparse, merge_summary_value = sess.run(

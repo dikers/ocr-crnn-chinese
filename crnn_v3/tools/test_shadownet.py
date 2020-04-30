@@ -96,7 +96,7 @@ def recognize(image_path, weights_path, char_dict_path, ord_map_dict_path, is_vi
     :return:
     """
     test_number=20
-        
+    print('Test file path {} '.format(txt_path) )
     NUM_CLASSES = get_num_class(char_dict_path)    
     print('num_classes: ',  NUM_CLASSES)
     
@@ -108,13 +108,6 @@ def recognize(image_path, weights_path, char_dict_path, ord_map_dict_path, is_vi
         image_path_temp = image_path + linelist[i].split(' ')[0]
         image_list.append((image_path_temp, linelist[i].split(' ')[1].replace('\r','').replace('\n','').replace('\t','')))
 
-
-    for path, label in image_list:
-        print(path, label)
-    
-    
-    
-    
 
     inputdata = tf.placeholder(
         dtype=tf.float32,

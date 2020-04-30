@@ -56,7 +56,7 @@ def generate_char_map(input_file, output_dir):
             if path.startswith('./'):
                 path = path[2:]
             new_line = '{} {}'.format(path, path.split('_')[1].lower())
-            print(new_line)
+            #print(new_line)
             new_lines.append(new_line)
 
     output_file_path = os.path.join(output_dir,input_file.split('/')[-1])
