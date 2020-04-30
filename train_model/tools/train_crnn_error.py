@@ -506,20 +506,20 @@ def train_shadownet(dataset_dir_train,dataset_dir_val, weights_path, char_dict_p
         cost_history = [np.inf]
         while epoch < train_epochs:
             epoch += 1
-            _, train_ctc_loss_value, merge_summary_value, learning_rate_value, train_labels_sparse, train_predictions= sess.run(
-                    [optimizer, train_ctc_loss, merge_summary_op, learning_rate, train_labels, train_decoded])
+            _, train_ctc_loss_value, merge_summary_value, learning_rate_value= sess.run(
+                    [optimizer, train_ctc_loss, merge_summary_op, learning_rate])
 
-            val_ctc_loss_value = sess.run([val_ctc_loss])
+            #val_ctc_loss_value = sess.run([val_ctc_loss])
 
-            train_labels_str = _sparse_matrix_to_list(train_labels_sparse[0], char_dict_path)
-            train_predictions = _sparse_matrix_to_list(train_predictions[0], char_dict_path)
-            avg_train_accuracy = evaluation_tools.compute_accuracy(train_labels_str, train_predictions)
+            #train_labels_str = _sparse_matrix_to_list(train_labels_sparse[0], char_dict_path)
+            #train_predictions = _sparse_matrix_to_list(train_predictions[0], char_dict_path)
+            #avg_train_accuracy = evaluation_tools.compute_accuracy(train_labels_str, train_predictions)
 
             if (epoch+1) % CFG.TRAIN.DISPLAY_STEP == 0:
-                logger.info('lr={:9f}  step:{:7d}   train loss= {:9f} val loss = {:9f}'.format( \
-                    learning_rate_value, epoch+1, train_ctc_loss_value, val_ctc_loss_value))
+                print('lr={:9f}  step:{:7d}   train loss= {:9f} '.format( \
+                    learning_rate_value, epoch+1, train_ctc_loss_value))
                 # record history train ctc loss
-                logger.info("train_predictions: {}  accuracy: {}".format(train_predictions , avg_train_accuracy) )
+                #logger.info("train_predictions: {}  accuracy: {}".format(train_predictions , avg_train_accuracy) )
                 cost_history.append(train_ctc_loss_value)
                 # add training sumary
                 summary_writer.add_summary(summary=merge_summary_value, global_step=epoch)

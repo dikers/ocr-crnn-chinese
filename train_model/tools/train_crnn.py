@@ -50,7 +50,7 @@ def init_args():
     parser.add_argument('-c', '--char_dict_path', type=str,
                         help='Directory where character dictionaries for the dataset were stored',
                         default='./step_three_recognize_process/char_map/char_map.json')
-    parser.add_argument('-mode', '--multi_gpus', type=int,
+    parser.add_argument('-m', '--multi_gpus', type=int,
                         help='whether to use multi gpu to train the model, 1 for multi, 0 for single gpu',
                         default=1)
 
@@ -494,8 +494,10 @@ def train_shadownet(dataset_dir_train,dataset_dir_val, weights_path, char_dict_p
 
             if (epoch+1) % CFG.TRAIN.DISPLAY_STEP == 0:
                 
-                print('lr={:.5f}  step:{:7d} train_loss={:.5f}   '.format(\
-                    learning_rate_value, epoch+1, train_ctc_loss_value))
+                current_time = time.strftime('%m-%d-%H-%M-%S', time.localtime(time.time()))
+                print('{} lr={:.5f}  step:{:6d}   train_loss={:.4f}'.format(\
+                    current_time, learning_rate_value, epoch+1, train_ctc_loss_value))
+                
                 # record history train ctc loss
                 cost_history.append(train_ctc_loss_value)
                  # add training sumary

@@ -6,4 +6,4 @@ python3 ../tools/train_crnn_001.py \
 -val=${DATA_TARGET_DIR}'tfrecords/valid' \
 -c=${DATA_TARGET_DIR}'char_map.json' \
 -s=${DATA_TARGET_DIR}'model_save' \
--mode=0
+-m=0

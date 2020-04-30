@@ -126,7 +126,6 @@ class ShadowNet(cnn_basenet.CNNBaseModel):
             # third apply the sequence label stage
             net_out, raw_pred = self._sequence_label(
                 inputdata=sequence, name='sequence_rnn_module')
-
         return net_out
 
     def compute_loss(self, inputdata, labels, name, reuse):
