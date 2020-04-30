@@ -61,17 +61,42 @@ def generate_char_map(lines, output_dir):
     char_map_json_file = os.path.join(output_dir, 'char_map.json')
     char_set = set(''.join(lines))
 
-    char_map = {}
+    single_char_map = {}
     index = 0
     for char in char_set:
-        char_map[char] = index
+        single_char_map[char] = index
         index += 1
+
+    json_string = json.dumps(single_char_map, ensure_ascii=False, indent=1)
+    with open(char_map_json_file, 'w', encoding='utf-8') as f:
+        f.write(json_string)
+    print('【输出】生成 Char map 文件  输出路径{}, 文件行数 {}.'.format(char_map_json_file, len(single_char_map)))
+
+
+    char_map = {}
+    ord_map = {}
+    index = 0
+    for char in char_set:
+        ord_map['{}_index'.format(index)] = str(ord(char))
+        ord_map['{}_ord'.format(ord(char))] = str(index)
+
+        char_map['{}_ord'.format(ord(char))] = char
+        index += 1
+
+    char_map_json_file = os.path.join(output_dir, 'char_dict_en.json')
+    ord_map_json_file = os.path.join(output_dir, 'ord_map_en.json')
 
     json_string = json.dumps(char_map, ensure_ascii=False, indent=1)
     with open(char_map_json_file, 'w', encoding='utf-8') as f:
         f.write(json_string)
 
-    print('【输出】生成 Char map 文件  输出路径{}, 文件行数 {}.'.format(char_map_json_file , len(char_map)))
+    json_string = json.dumps(ord_map, ensure_ascii=False, indent=1)
+    with open(ord_map_json_file, 'w', encoding='utf-8') as f:
+        f.write(json_string)
+
+
+    print('【输出】生成 Char dict 文件  输出路径{}, 文件行数 {}.'.format(char_map_json_file, len(char_map)))
+    print('【输出】生成 Ord  map  文件  输出路径{}, 文件行数 {}.'.format(ord_map_json_file, len(ord_map)))
 
 
 def combined_line(output_dir,
