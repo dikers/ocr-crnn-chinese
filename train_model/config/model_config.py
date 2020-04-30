@@ -25,23 +25,21 @@ __C.ARCH.SEQ_LENGTH = 70  # cn dataset
 __C.ARCH.INPUT_SIZE = (280, 32)                    # 输入图片宽高
 # Number of channels in images
 __C.ARCH.INPUT_CHANNELS = 3                        # 输入channel
-# Number character classes
-#__C.ARCH.NUM_CLASSES = 6031                        # 识别的字符类别数+1（含空格）
 
 # Train options
 __C.TRAIN = edict()
 # Set the shadownet training epochs
-__C.TRAIN.EPOCHS = 580000                          # 训练终止步数
+__C.TRAIN.EPOCHS = 500000                          # 训练终止步数
 # Set the display step
-__C.TRAIN.DISPLAY_STEP = 1                     # 训练过程中可视化步数
+__C.TRAIN.DISPLAY_STEP = 100                     # 训练过程中可视化步数
 # Set the initial learning rate
-__C.TRAIN.LEARNING_RATE = 0.01          # 初始学习率
+__C.TRAIN.LEARNING_RATE = 0.05          # 初始学习率
 # Set the shadownet training batch size
 __C.TRAIN.BATCH_SIZE = 64                          # batch_size
 # Set the learning rate decay steps
-__C.TRAIN.LR_DECAY_STEPS = 5000                    # 使用学习率指数衰减，衰减步幅
+__C.TRAIN.LR_DECAY_STEPS = 3000                    # 使用学习率指数衰减，衰减步幅
 # Set the learning rate decay rate
-__C.TRAIN.LR_DECAY_RATE = 0.96                     # 衰减值
+__C.TRAIN.LR_DECAY_RATE = 0.95                     # 衰减值
 # Set multi process nums
 __C.TRAIN.CPU_MULTI_PROCESS_NUMS = 10              # 多线程
 # Set moving average decay

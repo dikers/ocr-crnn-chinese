@@ -143,10 +143,6 @@ def recognize_jmz(image_path, weights_path, char_dict_path, txt_file_path, test_
     for i in range(test_number):
         image_path_temp = image_path + linelist[i].split(' ')[0]
         image_list.append((image_path_temp, linelist[i].split(' ')[1].replace('\r','').replace('\n','').replace('\t','')))
-
-
-    for path, label in image_list:
-        print(path, label)
     
     
     global reg_result
@@ -193,7 +189,8 @@ def recognize_jmz(image_path, weights_path, char_dict_path, txt_file_path, test_
             preds = sess.run(decodes, feed_dict={inputdata: [image], input_sequence_length:seq_len})
 
             preds = _sparse_matrix_to_list(preds[0], char_dict_path)
-            print('Label: {:30s}\tPredict: [{:s}]'.format(label, preds[0]))
+            print('Label: [{:20s}]'.format(label))
+            print('Pred : [{:20s}]\n'.format(preds[0]))
 
     sess.close()
 
@@ -204,7 +201,7 @@ def recognize_jmz(image_path, weights_path, char_dict_path, txt_file_path, test_
 if __name__ == '__main__':
     # init images
     args = init_args()
-    os.environ["CUDA_VISIBLE_DEVICES"] = "0"#指定在第0块GPU上跑
+    os.environ["CUDA_VISIBLE_DEVICES"] = "-1"#指定CPU
     
     recognize_jmz(image_path=args.image_path, weights_path=args.weights_path, 
               char_dict_path=args.char_dict_path, txt_file_path=args.txt_path,

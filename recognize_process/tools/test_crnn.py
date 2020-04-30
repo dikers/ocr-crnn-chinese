@@ -190,7 +190,8 @@ def recognize_jmz(image_path, weights_path, char_dict_path, txt_file_path, test_
                 preds = sess.run(decodes, feed_dict={inputdata: [image], input_sequence_length:seq_len})
 
                 preds = _sparse_matrix_to_list(preds[0], char_dict_path)
-                print('Label: [{:20s}]   Predict: [{:20s}]'.format(label, preds[0]))
+                print('Label: [{:20s}]'.format(label))
+                print('Pred : [{:20s}]\n'.format(preds[0]))
     sess.close()
 
     return
