@@ -16,7 +16,7 @@ import os.path as ops
 import random
 import glob
 import tensorflow as tf
-from train_model.config import model_config
+from config import model_config
 
 CFG = model_config.cfg
 

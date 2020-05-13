@@ -31,15 +31,17 @@ __C.TRAIN = edict()
 # Set the shadownet training epochs
 __C.TRAIN.EPOCHS = 500000                          # 训练终止步数
 # Set the display step
-__C.TRAIN.DISPLAY_STEP = 100                     # 训练过程中可视化步数
+__C.TRAIN.DISPLAY_STEP = 100                       # 训练过程中可视化步数
+
+__C.TRAIN.VAL_DISPLAY_STEP = 1000                  # 训练过程中可视化步数
 # Set the initial learning rate
-__C.TRAIN.LEARNING_RATE = 0.01          # 初始学习率
+__C.TRAIN.LEARNING_RATE = 0.01                    # 初始学习率
 # Set the shadownet training batch size
 __C.TRAIN.BATCH_SIZE = 64                          # batch_size
 # Set the learning rate decay steps
-__C.TRAIN.LR_DECAY_STEPS = 5000                    # 使用学习率指数衰减，衰减步幅
+__C.TRAIN.LR_DECAY_STEPS = 2000                    # 使用学习率指数衰减，衰减步幅
 # Set the learning rate decay rate
-__C.TRAIN.LR_DECAY_RATE = 0.95                     # 衰减值
+__C.TRAIN.LR_DECAY_RATE = 0.97                     # 衰减值
 # Set multi process nums
 __C.TRAIN.CPU_MULTI_PROCESS_NUMS = 10              # 多线程
 # Set moving average decay
@@ -48,6 +50,9 @@ __C.TRAIN.SAVE_STEPS = 1000                       # 每隔多少步保存一次�
 __C.TRAIN.GPU_MEMORY_FRACTION = 0.9                # 允许占用GPU运存的最大比例
 # Set the GPU allow growth parameter during tensorflow training process
 __C.TRAIN.TF_ALLOW_GROWTH = True
+
+__C.TRAIN.LR_STAIRCASE = True
+
 
 # Set Gpu nums
 __C.TRAIN.GPU_NUM = 1
