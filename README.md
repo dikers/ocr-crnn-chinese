@@ -116,3 +116,56 @@ tree -L 1
 
 [./notebook/train-cn.ipynb](./notebook/train-cn.ipynb)
 
+
+
+
+# 调用baiduOCR 自动生成训练样本
+
+
+[百度OCR api 接口](https://ai.baidu.com/ai-doc/OCR/)
+
+
+申请 开发ID 和Key
+```python
+from aip import AipOcr
+
+""" 你的 APPID AK SK """
+APP_ID = '你的 App ID'
+API_KEY = '你的 Api Key'
+SECRET_KEY = '你的 Secret Key'
+
+client = AipOcr(APP_ID, API_KEY, SECRET_KEY)
+```
+
+
+### 修改run.sh 脚本
+
+```shell script
+
+export PYTHONPATH=../
+
+python ../baidu_ocr/baidu_ocr.py \
+--input_dir='../temp/' \
+--output_dir='../target/' \
+--app_id='app_id' \
+--api_key='api_key' \
+--secret_key='secret_key'
+```
+
+
+### 生成数据示例样本
+```
+
+.
+├── test001_pdf_a98aac73    第一个PDF
+│   ├── data.json           ocr 返回结果
+│   ├── image.png           样本图片
+│   ├── images              裁剪后的小图
+│   └── labels.txt          标记文本数据
+└── test002_pdf_6df2f695
+    ├── data.json
+    ├── image.png
+    ├── images
+    └── labels.txt
+
+```
