@@ -119,7 +119,7 @@ tree -L 1
 
 
 
-# 调用baiduOCR 自动生成训练样本
+# 调用Baidu ocr自动生成训练样本
 
 
 [百度OCR api 接口](https://ai.baidu.com/ai-doc/OCR/)
@@ -138,7 +138,7 @@ client = AipOcr(APP_ID, API_KEY, SECRET_KEY)
 ```
 
 
-### 修改run.sh 脚本
+### 修改 label_tools/ocr.sh
 
 ```shell script
 
