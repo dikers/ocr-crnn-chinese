@@ -243,7 +243,7 @@ class CrnnDataFeeder(object):
                     * labels is an sparse tensor with shape [batch_size, None] with the true label
                     * image_paths is an tensor with shape [batch_size] with the image's absolute file path
         """
-
+        print('================={:s}/{:s}*.tfrecords'.format(self._tfrecords_dir, self._dataset_flags))
         tfrecords_file_paths = glob.glob('{:s}/{:s}*.tfrecords'.format(self._tfrecords_dir, self._dataset_flags))
 
         if not tfrecords_file_paths:

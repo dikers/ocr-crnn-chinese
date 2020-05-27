@@ -87,7 +87,7 @@ python ../data_provider/write_tfrecord.py \
 --dataset_dir=${BASE_DIR}'images/valid' \
 --char_dict_path=${BASE_DIR}'char_map.json' \
 --anno_file_path=${BASE_DIR}'valid_labels.txt' \
---dataset_flag='val' \
+--dataset_flag='valid' \
 --save_dir=${BASE_DIR}'tfrecords/'
 
 

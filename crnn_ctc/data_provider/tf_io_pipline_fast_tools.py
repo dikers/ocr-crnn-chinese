@@ -301,8 +301,8 @@ class CrnnFeatureReader(_FeatureIO):
         if not isinstance(value, str):
             raise ValueError('Dataset flags shoule be str')
 
-        if value.lower() not in ['train', 'val', 'test']:
-            raise ValueError('Dataset flags shoule be within \'train\', \'val\', \'test\'')
+        if value.lower() not in ['train', 'valid', 'test']:
+            raise ValueError('Dataset flags shoule be within \'train\', \'valid\', \'test\'')
 
         self._dataset_flag = value
 

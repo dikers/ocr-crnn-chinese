@@ -1,6 +1,7 @@
 DATA_TARGET_DIR='./data_cn/'
 
 export PYTHONPATH=../
+rm -fr ${DATA_TARGET_DIR}model_save/
 python3 ../tools/train_crnn.py \
 -train=${DATA_TARGET_DIR} \
 -val=${DATA_TARGET_DIR}'tfrecords/valid' \

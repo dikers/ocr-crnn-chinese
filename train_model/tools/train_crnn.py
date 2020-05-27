@@ -326,8 +326,9 @@ def train_shadownet_multi_gpu(dataset_dir_train, dataset_dir_val, weights_path, 
     """
     # prepare dataset information
     NUM_CLASSES = get_num_class(char_dict_path)
+    print(" dataset_dir_train       ", dataset_dir_train)
     
-
+    """
     train_dataset = shadownet_data_feed_pipline.CrnnDataFeeder(
         dataset_dir=dataset_dir_train,
         char_dict_path=char_dict_path,
@@ -342,18 +343,20 @@ def train_shadownet_multi_gpu(dataset_dir_train, dataset_dir_val, weights_path, 
     )
     
     """
-    
+    # FIXME: 以下的代码会出现问题
     train_dataset = read_tfrecord.CrnnDataFeeder(
         dataset_dir=dataset_dir_train,
         char_dict_path=char_dict_path,
+        ord_map_dict_path=ord_map_dict_path,
         flags='train')
 
     val_dataset = read_tfrecord.CrnnDataFeeder(
-        dataset_dir=dataset_dir_val,
+        dataset_dir=dataset_dir_train,
         char_dict_path=char_dict_path,
+        ord_map_dict_path=ord_map_dict_path,
         flags='valid')
         
-    """
+
     
     
     
@@ -365,8 +368,8 @@ def train_shadownet_multi_gpu(dataset_dir_train, dataset_dir_val, weights_path, 
     val_images, val_labels, val_images_paths = val_dataset.inputs(
         batch_size=CFG.TRAIN.BATCH_SIZE
     )
+ 
     
-
     # set crnn net
     shadownet = crnn_model.ShadowNet(
         phase='train',
@@ -517,7 +520,7 @@ def train_shadownet_multi_gpu(dataset_dir_train, dataset_dir_val, weights_path, 
                                        global_step=epoch)
 
             if epoch % CFG.TRAIN.DISPLAY_STEP == 0:
-                logger.info('lr= {:.5f}   epoch:{:6d}   total_loss= {:.5f} '.
+                logger.info('lr={:.5f}   epoch:{:6d}   total_loss={:.5f} '.
                             format(lr, epoch + 1,train_loss_value,))
 
 
@@ -530,7 +533,7 @@ def train_shadownet_multi_gpu(dataset_dir_train, dataset_dir_val, weights_path, 
 
                 summary_writer.add_summary(val_summary, global_step=epoch)
 
-                logger.info('Valid ------  epoch: {:d}    total_loss= {:6f} '.
+                logger.info('Valid-----   epoch:{:6d}   total_loss={:.5f} '.
                             format(epoch + 1, val_loss_value))
 
             if epoch % CFG.TRAIN.VAL_DISPLAY_STEP == 0:
@@ -556,7 +559,7 @@ if __name__ == '__main__':
     else:
         logger.info('***************** Use single gpu to train the model')
         train_shadownet(
-            dataset_dir_train=args.train_dataset_dir,
+            dataset_dir_train=args.train_dataset_dir + 'tfrecords/train',
             dataset_dir_val=args.val_dataset_dir,
             weights_path=args.weights_path,
             char_dict_path=args.char_dict_path,

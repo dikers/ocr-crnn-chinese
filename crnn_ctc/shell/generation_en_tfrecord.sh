@@ -88,7 +88,7 @@ python ../data_provider/write_tfrecord.py \
 --dataset_dir=${DATA_SRC_DIR} \
 --char_dict_path=${DATA_TARGET_DIR}'char_map.json' \
 --anno_file_path=${DATA_TARGET_DIR}'label/image_list_valid.txt' \
---dataset_flag='val' \
+--dataset_flag='valid' \
 --save_dir=${DATA_TARGET_DIR}'tfrecords'
 
 endTime=`date +%Y%m%d-%H:%M`

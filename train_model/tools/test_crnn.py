@@ -77,7 +77,7 @@ def _resize_image(img):
     return resized_img
 
 
-def _sparse_matrix_to_list(sparse_matrix, char_map_dict_path=None):
+def _sparse_matrix_to_list(sparse_matrix, char_map_dict):
     """
     将矩阵拆分为list，参考：https://github.com/bai-shang/crnn_ctc_ocr.Tensorflow
     :param sparse_matrix:
@@ -89,7 +89,7 @@ def _sparse_matrix_to_list(sparse_matrix, char_map_dict_path=None):
     dense_shape = sparse_matrix.dense_shape
 
     # the last index in sparse_matrix is ctc blanck note
-    char_map_dict = json.load(open(char_map_dict_path, 'r',encoding='utf-8'))
+
     if char_map_dict is None:
         print("error")
     assert (isinstance(char_map_dict, dict) and 'char_map_dict is not a dict')
@@ -191,10 +191,9 @@ def recognize_jmz(image_path, weights_path, char_dict_path, txt_file_path, test_
             image = np.array(image, np.float32) / 127.5 - 1.0
             seq_len = np.array([image.shape[1] / 4], dtype=np.int32)
             preds = sess.run(decodes, feed_dict={inputdata: [image], input_sequence_length:seq_len})
-
-            preds = _sparse_matrix_to_list(preds[0], char_dict_path)
+            preds = _sparse_matrix_to_list(preds[0], char_map_dict)
             print('Label: [{:20s}]'.format(label))
-            print('Pred : [{:20s}]\n'.format(preds[0]))
+            print('Pred : [{}]\n'.format(preds[0]))
 
     sess.close()
 
@@ -208,4 +207,4 @@ if __name__ == '__main__':
     
     recognize_jmz(image_path=args.image_path, weights_path=args.weights_path, 
               char_dict_path=args.char_dict_path, txt_file_path=args.txt_path,
-                 test_number=10)
+                 test_number=20)

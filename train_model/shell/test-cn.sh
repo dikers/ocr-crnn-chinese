@@ -1,7 +1,7 @@
 DATA_TARGET_DIR='./data_cn/'
 
 # 测试的类型  train valid
-TEST_TYPE='valid'
+TEST_TYPE='train'
 
 export PYTHONPATH=../
 python3 ../tools/test_crnn.py \

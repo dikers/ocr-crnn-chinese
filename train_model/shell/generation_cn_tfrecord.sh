@@ -95,6 +95,11 @@ python ../data_provider/write_tfrecord.py \
 --save_dir=${BASE_DIR}'tfrecords/'
 
 
+mkdir ${BASE_DIR}"tfrecords/valid"
+mkdir ${BASE_DIR}"tfrecords/train"
+
+cp ${BASE_DIR}"tfrecords/train_*"  ${BASE_DIR}"tfrecords/train/"
+cp ${BASE_DIR}"tfrecords/valid_*"  ${BASE_DIR}"tfrecords/valid/"
 
 
 

@@ -210,8 +210,8 @@ class CrnnDataFeeder(object):
             raise ValueError('{:s} not exist, please check again'.format(self._tfrecords_dir))
 
         self._dataset_flags = flags.lower()
-        if self._dataset_flags not in ['train', 'test', 'val']:
-            raise ValueError('flags of the data feeder should be \'train\', \'test\', \'val\'')
+        if self._dataset_flags not in ['train', 'test', 'valid']:
+            raise ValueError('flags of the data feeder should be \'train\', \'test\', \'valid\'')
 
         self._char_dict_path = char_dict_path
         self._ord_map_dict_path = ord_map_dict_path

@@ -142,9 +142,9 @@ client = AipOcr(APP_ID, API_KEY, SECRET_KEY)
 
 ```shell script
 
-export PYTHONPATH=../
+export PYTHONPATH=./
 
-python ../baidu_ocr/baidu_ocr.py \
+python ./baidu_ocr.py \
 --input_dir='../temp/' \
 --output_dir='../target/' \
 --app_id='app_id' \
@@ -167,5 +167,17 @@ python ../baidu_ocr/baidu_ocr.py \
     ├── image.png
     ├── images
     └── labels.txt
+
+```
+
+
+### 脚本执行过程
+
+```shell script
+
+cd  label_tools
+sh ./ocr.sh
+sh ./merge.sh
+sh ./generation_tfrecord.sh 0.2
 
 ```
