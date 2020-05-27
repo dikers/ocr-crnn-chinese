@@ -69,7 +69,7 @@ tree -L 1
 
 ```shell script
 
-cd ./crnn_ctc
+cd ./crnn_ctc/shell
 
 sh generation_en_tfrecord.sh   10000  0.2    # 生成英文数据
 
