@@ -42,7 +42,7 @@ sh ./shell/get_sample_data.sh
 ##  训练脚本说明  
 
 ```shell script
-cd ./crnn_ctc
+cd ./crnn_ctc/shell
 tree -L 1
 
 ├── data_cn                         #中文训练临时文件夹
