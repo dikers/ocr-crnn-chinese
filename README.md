@@ -171,13 +171,28 @@ python ./baidu_ocr.py \
 ```
 
 
-### 脚本执行过程
+### 生成文字识别的数据
 
 ```shell script
+
 
 cd  label_tools
 sh ./ocr.sh
 sh ./merge.sh
 sh ./generation_tfrecord.sh 0.2
 
+```
+
+
+### 生成文本区域检测的数据
+
+```shell script
+
+
+cd  label_tools
+sh ./ocr.sh
+sh ./generate_labelme_format.sh
+
+# 转换成 idcar 数据格式
+sh ./convert_labelme_to_icdar
 ```
