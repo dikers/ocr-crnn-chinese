@@ -160,7 +160,8 @@ class PreProcessingImage(object):
         :return:
         """
         # the tuple of file types
-        types = ('*.pdf', '*.jpg', '*.png', '*.jpeg')
+        #types = ('*.pdf', '*.jpg', '*.png', '*.jpeg')
+        types = ('*.jpg', '*.png')
         files_grabbed = []
         for files in types:
             files_grabbed.extend(glob.glob(os.path.join(input_dir, files)))
@@ -173,6 +174,8 @@ class PreProcessingImage(object):
 
             os.makedirs(file_output_dir)
 
+            print("------------ file: ", file)
+            print("------------ file_output_dir: ", file_output_dir)
             out_image_path = os.path.join(file_output_dir, 'image.png')
             if file.lower().endswith('pdf'):
                 self.convert_pdf(file, file_output_dir)

@@ -76,10 +76,10 @@ class GenerateLabelmeFormat(object):
             print(json_file)
 
 
-        base_dir = '/'.join(image_file.split('/')[:-1])
+        base_dir = '/'.join(json_file.split('/')[:-1])
 
-        #label_image_file = os.path.join(base_dir, "image_label.jpg")
-        #label_gt_file = os.path.join(base_dir, "label_gt.txt")
+        label_image_file = os.path.join(base_dir, "image_label.jpg")
+        label_gt_file = os.path.join(base_dir, "label_gt.txt")
         labelme_json_file = os.path.join(self.output_dir, prefix+".json")
 
         #print(label_image_file)
@@ -159,12 +159,12 @@ class GenerateLabelmeFormat(object):
             shape_item_list.append(shape_item)
 
 
-        # with open(label_gt_file, 'w', encoding='utf-8') as f:
-        #     f.write(new_lines)
-        # print('【输出】生成 idcar格式文件  输出路径{}, 对象个数 {}.'.format(label_gt_file, len(shape_item_list)))
-        #
-        # cv2.imwrite(label_image_file, bg_image)
-        # print('【输出】生成合格后的图片{} .'.format(label_image_file))
+        with open(label_gt_file, 'w', encoding='utf-8') as f:
+            f.write(new_lines)
+        print('【输出】生成 idcar格式文件  输出路径{}, 对象个数 {}.'.format(label_gt_file, len(shape_item_list)))
+
+        cv2.imwrite(label_image_file, bg_image)
+        print('【输出】生成合格后的图片{} .'.format(label_image_file))
 
         label_map['shapes'] =shape_item_list
 
