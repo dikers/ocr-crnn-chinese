@@ -191,8 +191,7 @@ sh ./generation_tfrecord.sh 0.2
 
 cd  label_tools
 sh ./ocr.sh
-sh ./generate_labelme_format.sh
 
 # 转换成 idcar 数据格式
-sh ./convert_labelme_to_icdar
+sh ./convert_labelme_to_icdar.sh
 ```
