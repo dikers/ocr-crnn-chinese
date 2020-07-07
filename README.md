@@ -177,8 +177,13 @@ python ./baidu_ocr.py \
 
 
 cd  label_tools
+# 进行ocr识别
 sh ./ocr.sh
-sh ./merge.sh
+
+#进行人工校对
+sh ./merge.sh  #合并数据集
+
+#生成tfrecord 训练数据
 sh ./generation_tfrecord.sh 0.2
 
 ```
@@ -190,8 +195,9 @@ sh ./generation_tfrecord.sh 0.2
 
 
 cd  label_tools
+# 进行ocr识别
 sh ./ocr.sh
 
 # 转换成 idcar 数据格式
-sh ./convert_labelme_to_icdar.sh
+sh ./generate_labelme_format.sh
 ```
